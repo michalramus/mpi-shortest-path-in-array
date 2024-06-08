@@ -25,7 +25,7 @@ import numpy as np
 #     ]
 
 SIZE = 24
-JUMP = 6
+JUMP = 23
 
 ARR = [
     [1, 2, 3, 4, 5, 6, 10, 67, 45, 96, 24, 236, 975, 35684, 85, 1357,86, 3568, 0, 45, 345, 12, 7654, 1454],
@@ -61,12 +61,12 @@ def main():
     rank = comm.Get_rank()
     processes = comm.Get_size()
 
-    if int(SIZE/processes) * processes != SIZE:
-        print("Incorrect processes count!!!")
+    if processes > SIZE:
+        print("Too many processes")
         return
-
-    if int(SIZE/JUMP) * JUMP != SIZE:
-        print("Incorrect jump count!!!")
+    
+    if JUMP > SIZE:
+        print("Too big jump")
         return
 
     #Prepare worging array
@@ -76,6 +76,11 @@ def main():
     # Prepare ranges
     begin_block = int(SIZE/processes*rank)
     block_size = int(SIZE/processes)
+
+    if  (rank == processes - 1) and (block_size * processes != SIZE):
+        block_size = SIZE - begin_block
+        
+    
     current_jump = 0
 
     print(f"rank {rank}  begin block {begin_block}  block size {block_size}  INDEX: {begin_block + block_size - 1}")
@@ -87,9 +92,14 @@ def main():
 
         # print(f"ROW: {row_from_previous_process}")
 
+        next_jump = current_jump + JUMP
+
+        if next_jump > SIZE:
+            next_jump = SIZE
+
         #Shortest path in array alghoritm
         for i in range(begin_block, begin_block + block_size):
-            for j in range(current_jump, current_jump + JUMP):
+            for j in range(current_jump, next_jump):
 
                 left = None
                 down = None
@@ -123,7 +133,7 @@ def main():
         # print("\nrcv")
         # print(np.matrix(data))
 
-        current_jump = current_jump + JUMP
+        current_jump = next_jump
 
 
     if rank == processes - 1:
