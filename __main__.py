@@ -3,7 +3,17 @@ import numpy as np
 
 #Initial data
 # SIZE = 6
-# JUMP = 6
+# JUMP = 3
+
+# ARR = [
+#     [1, 5, 45, 87, 34, 87],
+#     [7, 13, 75, 18, 63, 34],
+#     [87, 45, 96, 13, 8, 6],
+#     [24, 98, 45, 87, 36, 7],
+#     [5, 6, 17, 54, 24, 98],
+#     [4, 8, 87, 87, 678, 974]
+#     ]
+
 
 # ARR = [
 #     [1, 2, 3, 4, 5, 6],
@@ -14,9 +24,8 @@ import numpy as np
 #     [1, 2, 3, 4, 5, 6]
 #     ]
 
-
 SIZE = 24
-JUMP = 4
+JUMP = 6
 
 ARR = [
     [1, 2, 3, 4, 5, 6, 10, 67, 45, 96, 24, 236, 975, 35684, 85, 1357,86, 3568, 0, 45, 345, 12, 7654, 1454],
@@ -61,8 +70,8 @@ def main():
         return
 
     #Prepare worging array
-    row_from_previous_process = np.full((1, SIZE), None) # last row from previous process in the same block
-    data = np.full((SIZE, SIZE), None) #Dynamic programming array
+    row_from_previous_process = np.full((1, SIZE), 0) # last row from previous process in the same block
+    data = np.full((SIZE, SIZE), 0) #Dynamic programming array
 
     # Prepare ranges
     begin_block = int(SIZE/processes*rank)
@@ -85,7 +94,7 @@ def main():
                 left = None
                 down = None
 
-                if i != 0:
+                if j != 0:
                     left = data[i][j - 1]
 
                 if i == 0:
